@@ -1,6 +1,6 @@
 *[original Juice Shop readme](./JUICESHOP_README.md)*
 
-# Snyk Juice Shop
+# Snyk Juice Shop - fork by Rahimuddin
 
 This is a vulnerable by design repository for demonstrating Snyk in the IDE. Do not deploy this application in production.
 
