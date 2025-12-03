@@ -1,17 +1,8 @@
-/*
- * Copyright (c) 2014-2023 Bjoern Kimminich & the OWASP Juice Shop contributors.
- * SPDX-License-Identifier: MIT
- */
+import Loki from 'lokijs'
 
-// @ts-expect-error FIXME due to non-existing type definitions for MarsDB
-import MarsDB = require('marsdb')
+const db = new Loki('reviews.db', { autoload: true, autosave: true })
 
-const reviews = new MarsDB.Collection('posts')
-const orders = new MarsDB.Collection('orders')
+const reviews = db.getCollection('posts') || db.addCollection('posts')
+const orders = db.getCollection('orders') || db.addCollection('orders')
 
-const db = {
-  reviews,
-  orders
-}
-
-module.exports = db
+module.exports = { reviews, orders }
