@@ -10,6 +10,7 @@ import { BasketModel } from '../models/basket'
 import { UserModel } from '../models/user'
 import challengeUtils = require('../lib/challengeUtils')
 import config from 'config'
+import { Op } from 'sequelize'
 
 import * as utils from '../lib/utils'
 const security = require('../lib/insecurity')
@@ -90,6 +91,35 @@ module.exports = function login () {
       }).catch(() => {
         throw new Error('Unable to verify challenges! Try again')
       })
+    }
+  }
+}
+
+module.exports.searchUsers = function searchUsers () {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const queryParam = req.query.q
+    
+    if (typeof queryParam !== 'string' || queryParam.trim().length === 0) {
+      return res.status(400).json({ error: 'Search term is required and must be a string' })
+    }
+
+    const searchTerm = queryParam.trim()
+
+    try {
+      const users = await UserModel.findAll({
+        where: {
+          [Op.or]: [
+            { email: { [Op.like]: `%${searchTerm}%` } },
+            { username: { [Op.like]: `%${searchTerm}%` } }
+          ],
+          deletedAt: null
+        },
+        attributes: ['id', 'email', 'username', 'role', 'profileImage', 'createdAt']
+      })
+
+      res.json({ status: 'success', data: users })
+    } catch (error) {
+      next(error)
     }
   }
 }
